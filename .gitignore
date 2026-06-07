@@ -18,3 +18,10 @@ __pycache__/
 # OS
 .DS_Store
 Thumbs.db
+
+#claude and venv
+.claude/
+.codepath_AI201_venv/
+
+
+#screenshot

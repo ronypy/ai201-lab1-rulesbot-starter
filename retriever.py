@@ -68,5 +68,21 @@ def retrieve(query, n_results=N_RESULTS):
     if _collection.count() == 0:
         return []
 
-    # Your implementation here.
-    return []
+    # ChromaDB embeds the query with the same model used at ingestion, then
+    # returns the n_results nearest stored chunks by cosine distance.
+    results = _collection.query(
+        query_texts=[query],
+        n_results=n_results,
+        include=["documents", "metadatas", "distances"],
+    )
+
+    # query() returns one parallel list per query string. We sent a single
+    # query, so the actual results live at index [0] of each list.
+    documents = results["documents"][0]
+    metadatas = results["metadatas"][0]
+    distances = results["distances"][0]
+
+    return [
+        {"text": text, "game": metadata["game"], "distance": distance}
+        for text, metadata, distance in zip(documents, metadatas, distances)
+    ]
